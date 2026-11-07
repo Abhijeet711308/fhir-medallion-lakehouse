@@ -1,0 +1,41 @@
+# Pipeline configuration. Nothing in the code is hardcoded; change values here
+# or override them with notebook widgets / job parameters.
+
+fhir:
+  base_url: https://hapi.fhir.org/baseR4
+  payload_format: json          # json or xml
+  page_size: 100                # _count sent to the API
+  max_pages_per_window: 10      # safety cap per resource per day, set to null for no cap
+  timeout_seconds: 60
+  max_retries: 5
+  backoff_seconds: 2            # doubles after every failed attempt
+  request_delay_seconds: 0.3    # small pause between pages, public server is shared
+  incremental_param: _lastUpdated
+  sort_param: _lastUpdated
+  # ingestion order, each resource is loaded after the previous one
+  resources:
+    - Patient
+    - Encounter
+    - Observation
+    - Condition
+
+load:
+  default_backfill_days: 3      # used when no watermark exists and no dates are passed
+  watermark_overlap_hours: 0    # re-read this many hours before the watermark, 0 = none
+
+storage:
+  catalog: workspace            # Databricks Free Edition default catalog
+  schemas:
+    raw: fhir_raw               # holds the volume with the raw API files
+    meta: fhir_meta             # audit / log tables
+    bronze: fhir_bronze
+    silver: fhir_silver
+    gold: fhir_gold
+  raw_volume: raw_zone          # volume name inside the raw schema
+  # Optional: set a full path to override the volume location (for local runs / Fabric Files)
+  raw_root_override: null
+
+tables:
+  api_call_log: api_call_log
+  run_log: pipeline_run_log
+  watermark: pipeline_watermark
