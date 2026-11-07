@@ -50,7 +50,7 @@ PROGRESS.md                    build log
 
 ### Option A: Workflow
 
-1. Open `workflows/fhir_pipeline_job.json`, replace `<your-github-username>` in `git_url`, and create the job (Workflows -> Create job -> JSON, or the Jobs API / CLI).
+1. Open `workflows/fhir_pipeline_job.json`, check that `git_url` points to your repo, and create the job (Workflows -> Create job -> JSON, or the Jobs API / CLI).
 2. Run it with the defaults. With no dates and no watermark it loads the last 3 days.
 3. Run it again the next day (or after the source data changes). It continues from the watermark, and silver adds a new version for every record that changed.
 
